@@ -23,6 +23,7 @@ void desconectar();
 void verCompromissos();
 void mostrarErroDoMysql();
 void adicionarCompromisso();
+void editarCompromisso();
 
 /////////////////////////////
 /// Variáveis globais X<( ///
@@ -220,4 +221,98 @@ void verCompromissos() {
 		mostrarErroDoMysql(connexao);
 		std::cout << "Falha ao recuperar os registros!" << std::endl;
 	}
+	
+	void editarCompromisso(){
+
+	 //Verifica se a conexão foi realizada com sucesso
+	 if (!conectar()){
+		 std::cout << "Falha ao conectar ao banco de dados" << std::endl;
+		 return;
+	 }
+
+	 //Variáveis usadas para montar o query
+	 std::string cod, dia, mes, ano, descricao;
+	 std::char mud, od;
+
+	 //exibe os compromissos
+	 verCompromisso();
+
+	 //pergunta qual compromisso vai ser editador atráves do código do compromisso
+	 std::cout << "Informe qual compromisso você deseja alterar, colocando o código dele:";
+	 std::cin >> cod;
+	 
+	 //Agora irá questionar qual item do compromisso será editado
+	 std::cout << "Informe qual item do compromisso deseja alterar: d-dia, m-mês, a-ano, c-descrição, v-mais de um (fará com que todos os itens seham revistos)";
+	 std::cin >> mud;
+
+	 switch (mud){
+		 case d:
+			 std::cout << "Informe o novo dia:";
+			 std::cin >> dia;
+			 break;
+
+		case m:
+			 std::cout << "Informe o novo mês:";
+			 std::cin >> mes;
+			 break;
+
+	        case a:
+			 std::cout << "Informe o novo ano:";
+			 std::cin >> ano;
+			 break;
+
+		case c:
+			 std::cout << "Coloque a nova descrição:";
+			 std::cin >> descricao;
+			 break;
+
+		case v:
+			 std::cout << "Informe o novo dia:";
+			 std::cin >> dia;
+			 std::cout << "Informe o novo mês:";
+			 std::cin >> mes;
+			 std::cout >> "Informe o novo ano:";
+			 std::cin >> ano;
+			 std::cout << "Coloque a nova descrição:";
+			 std::cin >> descricao;
+		default:
+			 std::cout <<"Opção Inválida";
+	
+	 }
+
+	 //formando a string para ser mandada para o banco de dados mysql
+	 std::string sql = "UPDATE Compromisso SET data=' " + ano + "-" + mes + "-" + dia + ", descricao +" 'WHERE cod=' " + cod +" ' ";
+
+
+	 //confirmando se o usuário tem certeza da alteração
+	 std::cout << "Tem certeza das alterações? Caso sim digite s, caso não digite n.";
+	 std::cin >> od;
+
+	 switch (od){
+		 case s:
+			 //executa a query
+			 int statusDeExecucao = mysql_query(connexao. sql.data());
+
+			 //Verifica se deu tudo certo
+			 if (statusDeExecucao == 0){
+				 //deu certo
+				 std::cout << "Compromisso editado" << std::endl;
+			 }
+			 else {
+				 //algo deu errado
+				 mostrarErroDoMysql(connexao);
+				 std::cout << "Falha ao editar compromisso" << std::endl;
+			 }
+			 break;
+
+			 //caso o usuário desista de alterar, o bloco será encerrado
+			case n:
+			 std::cout << "Operação cancelada";
+			 return;
+			 break;
+
+			default:
+			 std::cout << "Opção inválida";
+	 }
 }
+
