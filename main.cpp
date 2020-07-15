@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 				break;
 			case EDITAR_COMPROMISSO:
 				// TODO implementar
-				std::cout << "Falta implementar." << std::endl;
+				editarCompromisso();
 				break;
 		}
 
